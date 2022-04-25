@@ -1,1 +1,51 @@
 
+git clone https://github.com/triton-inference-server/server.git
+curl https://get.docker.com | sh   && sudo systemctl --now enable docker
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID)    && curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -    && curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+sudo apt-get update
+sudo apt-get install -y nvidia-docker2
+sudo systemctl restart docker
+sudo usermod -aG docker $USER
+newgrp docker
+docker run --rm --gpus all nvidia/cuda:11.0-base nvidia-smi
+
+docker login nvcr.io
+Username: $oauthtoken
+Password: Z2I0Mm5xMTNyMTc1dWRuYmFsNWFkaGZybmo6ODAwNTNmNWEtYzZmNy00MTcwLTljYzUtNWFjMDVkM2FlMjlh
+
+docker pull nvcr.io/nvidia/tritonserver:22.02-py3
+
+docker pull nvcr.io/nvidia/tritonserver:22.02-py3-sdk
+
+// SERVER run
+cd docs/examples
+
+./fetch_models.sh
+
+sudo docker run --gpus=1 --ipc=host --runtime=nvidia --rm -p8000:8000 -p8001:8001 -p8002:8002 -v ~/gpuoverload/server/docs/examples/model_repository:/models nvcr.io/nvidia/tritonserver:22.02-py3 tritonserver --model-repository=/models
+
+CMD ["./nbody", "-benchmark", "-i=10000", "-numdevices=8"]
+
+curl -v localhost:8000/v2/health/ready
+
+sudo docker run --gpus=1 --rm -it -v ~/gpuoverload/server:/triton nvcr.io/nvidia/tritonserver:22.02-py3
+
+watch -n 1 "curl -v --silent localhost:8002/metrics --stderr - | grep 'nv_gpu_utilization\|nv_gpu_power_usage'"
+
+./build.py --no-container-build --cmake-dir=./build --build-dir=/tmp/citritonbuild --enable-logging --enable-stats --enable-tracing --enable-metrics --enable-gpu-metrics --enable-gpu --filesystem=gcs --filesystem=azure_storage --filesystem=s3 --endpoint=http --endpoint=grpc --repo-tag=common:r22.02 --repo-tag=core:r22.02 --repo-tag=backend:r22.02 --repo-tag=thirdparty:r22.02 --backend=ensemble --backend=tensorrt:r22.02 --backend=identity:r22.02 --backend=repeat:r22.02 --backend=square:r22.02 --backend=onnxruntime:r22.02 --backend=pytorch:r22.02 --backend=tensorflow1:r22.02 --backend=tensorflow2:r22.02 --backend=openvino:r22.02 --backend=python:r22.02 --backend=dali:r22.02 --backend=fil:r22.02 --repoagent=checksum:r22.02
+
+
+// CLIENT run
+sudo docker run -it --rm --net=host nvcr.io/nvidia/tritonserver:22.02-py3-sdk
+
+/workspace/install/bin/image_client -m densenet_onnx -c 3 -s INCEPTION /workspace/images/mug.jpg
+
+/workspace/install/bin/image_client -u 192.5.87.75:8000 -m densenet_onnx -c 3 -s INCEPTION /workspace/images/mug.jpg
+
+Use the verbose (-v) option to perf_analyzer to see more output
+
+localhost:8001
+
+perf_analyzer -m inception_graphdef -u 192.5.87.195:8001 -i gRPC --async -p 1000 --request-rate-range 40:100:5 --request-distribution poisson -s 50
+
+perf_analyzer -m densenet_onnx -u 192.5.87.195:8001 -i gRPC --async -p 1000 --request-rate-range 100:200:5 --request-distribution poisson -s 100 -b 1 -f stats1_2.csv
