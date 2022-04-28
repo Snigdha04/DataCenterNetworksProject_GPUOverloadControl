@@ -1,6 +1,30 @@
 # DataCenterNetworksProject_GPUOverloadControl
 
+
 ## Chameleon Cloud Setup ##
+
+**Step1:** Create a new lease in Chamelon cloud with following configuration:
+``` Bash
+resource type   physical:host
+missing resources   No
+resources changed   No
+hypervisor_properties   -
+resource_properties   ["==","$node_type","gpu_rtx_6000"]
+before_end    default
+on_start    default
+min   2
+max   2
+```
+**Step2:** Create/Add key pair under **Compute/Key Pairs** in dashboard
+
+**Step3:** Initiate two instances under **Compute/Instances** in dashboard of type:
+``` Bash
+Image Name CC-Ubuntu20.04-CUDA11-20211129
+```
+Make sure to set your ssh key in the instance config
+
+**Step4:** Create/Add two floating IPs under **Network/Floating IPs** in dashboard and attach them to the created instances
+
 
 
 ## TRITON Inference Engine Setup ##
@@ -50,7 +74,7 @@ cd server/docs/examples
 ```
 #### Run Triton ####
 
-**With-out MPS**
+**Without MPS**
 Hosting model 1
 ``` Bash
 sudo docker run --gpus=1 --rm -p8000:8000 -p8001:8001 -p8002:8002 -v ~/gpuoverload/server/docs/examples/model_repository:/models nvcr.io/nvidia/tritonserver:22.02-py3 tritonserver --model-repository=/models
