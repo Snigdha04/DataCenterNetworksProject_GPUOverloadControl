@@ -1,5 +1,6 @@
 # DataCenterNetworksProject_GPUOverloadControl
 
+DISCLAIMER: I executed these instructions on a fresh cloudlab experiment on 2021-11-24.
 
 ## Chameleon Cloud Setup ##
 
@@ -25,6 +26,10 @@ Make sure to set your ssh key in the instance config
 
 **Step4:** Create/Add two floating IPs under **Network/Floating IPs** in dashboard and attach them to the created instances
 
+SSH to your cloudlab machine(s). For example, I use the following:
+``` Bash
+ssh -i .ssh/mychameloeonkey.pem cc@192.5.87.110
+```
 
 
 ## TRITON Inference Engine Setup ##
