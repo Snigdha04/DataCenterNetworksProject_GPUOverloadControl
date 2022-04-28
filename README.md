@@ -79,7 +79,7 @@ cd server/docs/examples
 ```
 #### Run Triton ####
 
-**Without MPS**
+##### Without MPS #####
 Hosting model 1
 ``` Bash
 sudo docker run --gpus=1 --rm -p8000:8000 -p8001:8001 -p8002:8002 -v ~/gpuoverload/server/docs/examples/model_repository:/models nvcr.io/nvidia/tritonserver:22.02-py3 tritonserver --model-repository=/models
@@ -89,7 +89,7 @@ Hosting model 2
 sudo docker run --gpus=1 --rm -p8003:8000 -p8004:8001 -p8005:8002 -v ~/gpuoverload/server/docs/examples/model_repository:/models nvcr.io/nvidia/tritonserver:22.02-py3 tritonserver --model-repository=/models
 ```
 
-**With MPS**
+##### With MPS #####
 Hosting model 1
 ``` Bash
 sudo docker run --gpus=1 --ipc=host --runtime=nvidia --rm -p8000:8000 -p8001:8001 -p8002:8002 -v ~/gpuoverload/server/docs/examples/model_repository:/models nvcr.io/nvidia/tritonserver:22.02-py3 tritonserver --model-repository=/models
